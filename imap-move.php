@@ -21,6 +21,7 @@ Run Like:
     --fake to just list what would be copied
     --wipe to remove messages after they are copied (move)
     --copy to store copies of the messages in a path
+    --gmail to manage gmail folders
 
 */
 
@@ -287,6 +288,7 @@ function _args($argc,$argv)
     $_ENV['fake'] = false;
     $_ENV['once'] = false;
     $_ENV['wipe'] = false;
+    $_ENV['gmail'] = false;
 
     for ($i=1;$i<$argc;$i++) {
         switch ($argv[$i]) {
@@ -325,6 +327,9 @@ function _args($argc,$argv)
         case '--wipe':
             $_ENV['wipe'] = true;
             break;
+        case '--gmail':
+            $_ENV['gmail'] = true;
+            break;
         default:
             echo "arg: {$argv[$i]}\n";
         }
@@ -344,12 +349,14 @@ function _args($argc,$argv)
 function _path_map($x)
 {
     if (preg_match('/}(.+)$/',$x,$m)) {
-        switch (strtolower($m[1])) {
-        // case 'inbox':         return null;
-        case 'deleted items': return '[Gmail]/Trash';
-        case 'drafts':        return '[Gmail]/Drafts';
-        case 'junk e-mail':   return '[Gmail]/Spam';
-        case 'sent items':    return '[Gmail]/Sent Mail';
+        if($_ENV['gmail']){
+            switch (strtolower($m[1])) {
+                // case 'inbox':         return null;
+                case 'deleted items': return '[Gmail]/Trash';
+                case 'drafts':        return '[Gmail]/Drafts';
+                case 'junk e-mail':   return '[Gmail]/Spam';
+                case 'sent items':    return '[Gmail]/Sent Mail';
+            }
         }
         $x = str_replace('INBOX/',null,$m[1]);
     }
